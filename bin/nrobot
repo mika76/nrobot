@@ -1,0 +1,21 @@
+#!/bin/sh
+
+# Apparently all this is actually necessary to cd into the parent directory of
+# the location where the script really lives, including taking (one level of)
+# symlinks into account.
+SCRIPT=`which "$0"`
+DIR=`dirname "$SCRIPT"`
+SCRIPT=`basename "$SCRIPT"`
+cd "$DIR"
+SCRIPT=`readlink "$SCRIPT"`
+if [ -n "$SCRIPT" ]; then
+  DIR=`dirname "$SCRIPT"`
+  cd "$DIR"
+fi
+cd ..
+
+echo "WARNING: Mono does not support NRobot's security architecture"
+echo "Launching nrobot in insecure mode..."
+
+# Actually invoke NRobotGTK
+mono bin/NRobotGTK.exe -insecure Bots/Mono "$@"

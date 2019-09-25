@@ -1,0 +1,20 @@
+NRobot is distributed under the terms of the GNU General Public License.
+
+Furthermore, we explicitly do NOT consider robots programmed for this game (see
+definition below) to be derived works. This is because NRobot is a programming
+competition: the normal principles of free software (while very important to
+almost every other kind of software) don't work very well for a program whose
+sole purpose is to defeat other programs written by others. The game wouldn't
+be much fun if everyone was immediately free to copy the code of the winning
+robot (although, as is usual with Free Software, the quality of the resulting
+bots would be very high).
+
+Robots are limited to using a public API anyway, and it is possible that
+copyright law would not allow them to be considered derived works at all. Since
+this question appears to not to be clearly answered by copyright law, we
+preferred to make it explicit for the particular case that is important to us.
+
+Definition of a "robot programmed for this game": A library containing an
+implementation of the NRobot.Robot.IRobot interface, annotated appropriately by
+the [assembly:RobotClass] attribute, and not derived from any part of NRobot
+except for using the public API defined in the NRobot.Robot namespace.

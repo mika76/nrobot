@@ -1,0 +1,217 @@
+* Firm up robot API
+  * Rename RobotState to TickState and RobotStart to StartState
+  * Add common superclass RobotState of TickState and StartState
+  * Add Active property to RobotState; ensure that all objects
+    hung off one of these will refuse to do anything if not active.
+  * Change all objects hung off TickState or StartState to hang off RobotState
+    instead, so the code can be shared...
+  * Go through existing methods and verify that they match current reality
+  * Implement "object ID" technique for OtherBot equality
+  * Implement all basic property getters and setters
+  * Implement any other methods (are there any?)
+  * Implement constructors that will build the whole tree of objects out of
+    just an Engine.Robot object.
+* Pull in owner name, team name and robot name(s) from attributes
+* Implement engine
+  * Implement all the basic proprety setter/getters with backing vars
+    * Game
+    * Team
+    * Robot
+    * Bullet
+  * Implement AddTeam/RemoveTeam (initially without DLL loading)
+  * Implement Start()
+    * Create robots from the robotType class
+    * position them at random
+    * Create initial StartState objects for each robot and call IRobot.Start()
+      passing these as parameters
+    * Initialize robot and bullet lists at all levels
+  * Implement Tick()
+    * Implement creation of RobotState hierarchy
+      * Implement figuring out which other bots are visible: AngleFromSelf
+        between -125 and 125...
+      * Implement figuring out distance and angle to wall:
+        * If direction *is* a multiple of 250, the whole calculation is easy;
+          just use X, Y, ArenaWidth - X or ArenaHeight - Y appropriately
+          and AngleToWall is 0.
+        * Otherwise use floor(direction / 250) to determine which pair of
+          walls are possible and do the calculations for just those two
+          walls.
+          * For each wall, use cos and sin to figure out intersection point:
+            * Yr + nCos(th) = (0 or ArenaHeight) for horiz walls
+            * Xr + nSin(th) = (0 or ArenaWidth) for vert walls
+            * So n is, eg, (ArenaWidth - Xr) / Sin(th)
+          * Pick the one with the shortest
+          * AngleToWall is Direction +- an appropriate multiple of 250.
+    * Implement calling IRobot.Tick() and getting the results
+    * Implement movement
+    * Implement wall-only collision detection
+    * Implement shooting
+      * Recognise fire and create a bullet
+      * Implement bullet-movement
+      * Implement bullet-bot collisions (damage bot, destroy bullet)
+    * Implement robot death
+      * If health goes below 0 it *is* 0
+      * Dead robots don't get Tick() called
+      * Dead robots are never visible
+      * AliveBots list on game and team?
+    * Implement game-over detection
+      * Scan for AliveBots.Count > 0 on each team
+      * If there are less than two teams with AliveBots.Count > 0, game is over
+      * If there are no teams alive (two deaths in the same tick), there's
+        no winner. Later we can support the notion that all the teams that
+        were alive in the previous tick are tied, or implement tiebreakers.
+    * Implement inter-bot collision detection
+      * Detect that the collision has occurred
+      * Detect the direction of the collision
+      * Compare to the direction of each bot
+      * If the bot was moving towards the collision, revert to their
+        position at the beginning of the turn; otherwise allow the move.
+      * Change wall-collisions to use the same algo.
+      * Repeat the calculations with the new position.
+        * This bit is important and dictates a change in the overall algorithm
+        * newX and newY should be stored in the robotState object and in the
+          first pass, only take into account wall collisions.
+        * A looping pass should repeat until no collisions are detected, doing
+          the following:
+          * Loop over all the robotStates (twice nested).
+          * Check for collisions
+          * If the bot moved at all (newX != oldX etc), resolve whether it
+            moved in the direction of the collision, and if so, revert the
+            move (newX = oldX etc).
+          * Do this to *both* bots at the same time, otherwise one gets an
+            advantage.
+          * Dot product can be done without sin and cos by using newx - x...
+          * If neither bot moved this isn't counted as a collision (to avoid
+            infinite loops in the event of a bug allowing two bots to be in
+            the same place at the same time - eg at start of game right now!)
+          * Otherwise count it as a collision so that the loop will happen
+            again.
+        * Once all of that is over, update the actual X and Y to newX/newY
+- Separate out creating the robotStates from doing what's requested so
+  that all the robotStates *only* refer to the prior state, otherwise it's
+  unfair.
+  - StartState (needs implementation of name.Set and SetTeamName to change)
+  * TickState
+* Implement DLL loading and finding the RobotClassAttribute to get the
+  robot type.
+* Figure out why collision detection is doing nothing at all, apparently
+  * Add xmv1, xmv2, ymv1, ymv2 to the output when a collision happens
+  * Turns out moved1 and moved2 were being set to the opposite of desired value.
+* Feature enhancements
+  * Add a firing delay (default 5 ticks)
+  * Add color support: Team has a color, robot has a color, specified as
+    hex (0xffffff) on the TeamInfoAttribute or RobotInfoAttribute
+    constructors. Yes, those should be renamed.
+  * Separate the direction of the gun, camera and wheels. Allow turning each
+    one separately. Provide access to the angles between the three.
+    * RobotState and TickState API
+    * VisibleBot API
+    * Engine.Robot API
+    * Engine.Game implementation
+    * RobotState, TickState and VisibleBot implementation
+  * Damage from a bullet hit depends on how close it is to a direct hit.
+- Cleanup and completeness enhancements
+  - Implement appropriate boundary conditions on each of the rule values
+  - Implement randomization and seeding
+  - Improve accuracy of Sin and Cos by making them take a multiplicand; the
+    values stored in the array can be say 1000sin(x) but the function
+    would return mul * 1000sin(x) / 1000 which is closer to accurate.
+  * Reduce mem use of Sin and Cos array by taking symmetry into account: you
+    really only need to store Sin from 1-90deg to calculate all the other
+    ranges.
+- Implement Commandline client
+  * Show coords/dir in text
+  - Render the board in text mode using ><^v to indicate bots and . (or
+    better yet "bullet" if I can find it) to indicate bullets
+  - Show health in a sidebar
+* Implement shared Render code
+  * ICanvas that provides basic drawing primitives
+    * int Width {get;}
+    * int Height {get;}
+    * void DrawRectangle(color, x, y, width, height)
+    * void DrawCircle(color, startx, starty, diameter)
+    * void DrawLine(color, x1, y1, x2, y2, thickness)
+    * object GetColor(NRColor color)
+  * NRobot.Render.Renderer
+    * new Renderer(Game game, ICanvas canvas) {
+      * void Render() {
+* Renderer enhancements
+  * Teach Renderer to scale the viewing area to an arbitrary size
+  * Add more colors definable per-team AND per-robot:
+    * BodyColor (def random)
+    * TurretColor (def random)
+    * GunColor (def TurretColor)
+    * WheelColor (def TurretColor)
+    * CameraColor (def White)
+    * LensColor (def Black)
+    * BulletColor (def BodyColor)
+      Anything not defined on the team sets the team's color to the default.
+      Anything not defined on the robot sets the robot's color to the team's.
+  * Draw cameras and wheels on each bot
+- Implement GTK# client
+  * Basic black-n-white rendering
+  * Use Renderer to draw arena
+  * Verify that the line thicknesses aren't screwing up circles and rects
+    in GTKCanvas.
+  - Side panel showing team and robot health
+    - HBox, containing:
+      - DrawableArea for the arena that already exists
+      - VBox, containing:
+        - "New Game" button
+        - "Load teams" button
+        - "Configure" button
+        - "Ready" button
+          - changes to "Start" button after being pressed once
+          - changes to "Pause" while the game is running
+          - changes to "Resume" while the game is paused
+          - gets disabled once the game is over
+        - For each team:
+          - A label of the team's name
+          - A progress bar of the team's available health
+          - An HBox containing, for each robot, a vbox with a picture,
+            a label (with the name) and a progress bar of the health
+  - Dialog box to set game parameters
+- Implement WinForms client
+  * Use Renderer to draw arena
+  * Use NRColor as the color object; implement a hashtable-cache to go from
+    those to Brushes and Pens as needed
+  * Provide some way to start the game, even if it's cmdline-args
+  * Use the correct way of getting a Brush/Pen from RGB values
+  * Implement line thicknesses in WinCanvas
+  * Side panel showing team and robot health
+  - Dialog box to set game parameters
+* Ability to trade off certain properties of your robot against each other.
+  Improve speed at the cost of worsened bullet damage, for example.
+  Parameters:
+  * Offensive:
+    * BulletDamage
+    * FiringDelay
+    * BulletSpeed
+    * ShotsPermitted (affects both individual and team shots equally)
+  * Defensive:
+    * MaxMoveSpeed
+    * MaxTurnSpeed
+    * MaxTurretTurnSpeed
+    * Size (bigger is worse)
+
+  Syntax:
+* Implement sample bots
+  * Dizzy
+  * Random
+  * Follower
+- Document robot API
+  - IRobot
+  - RobotClassAttribute
+  - RobotState
+  - StartState
+  - TickState
+  - RobotTeam
+  - OtherBot
+  - VisibleBot
+  - Rules
+  - Util (not public, but still document...)
+- Document engine API
+  * Game
+  - Team
+  - Robot
+  - Bullet

@@ -1,0 +1,78 @@
+There are numerous things that can be done to improve NRobot. Most of these
+don't need a programming genius to do, just someone with experience in a
+particular area. This file lists some examples of features that would be
+cool to have, are mostly self-contained and could be tackled comfortably
+by a single hacker.
+
+And if none of these appeal but you have another great idea, go right ahead
+and start coding. I'd love to see your patches...
+
+GUI
+---
+Both the WinForms and GTK front ends leave much to be desired. The WinForms
+GUI, when launched, immediately plays a single game and then stops, and then
+you have to quit and restart. The GTK GUI has the same problem and also
+relies on a console window to display health stats and robot output. Both
+front ends require the directory of robot DLLs to be passed on the command
+line, and neither allow any of the tunable parameters (team and arena sizes,
+starting health, etc) to be modified from their defaults at all. During play,
+there's no ability to stop or pause the game and the stats are displayed in
+plain text.
+
+Anybody with GUI programming and UI design experience should have no trouble
+throwing together an improved version of either one of the front ends.
+
+
+Eye Candy
+---------
+Wouldn't it be cool if there were a little tooltip-sized semi-transparent
+floating label next to each robot giving its name? Wouldn't it be beautiful
+if when the robots talk their speech showed up in little speech bubbles?
+On a simpler note, even an attractive background (or selection of backgrounds)
+or a more polished appearance of the robots themselves (Antialiasing? SVG?
+Anyone? Bueller? Anyone?) would be extremely cool.
+
+For the really ambitious, how about using XAML or GL# to produce a 3D front
+end to NRobot? You could let the user control the camera angle and one option
+might even be to show things from a particular robot's point of view. As
+robots get damaged you could render them gradually getting black and battered.
+
+
+Security
+--------
+Try to hack the security sandbox so you can cheat in some way. Then figure out
+a way to fix the sandbox so your hack doesn't work. Lather, rinse, repeat.
+
+
+Game Engine
+-----------
+How about adding walls inside the arena? Fix the visibility rules so that
+you can't see anything behind a wall, or obscured by another robot. In the
+process you'll totally screw my robot implementation, but that's just another
+challenge for me, and I relish it :)
+
+
+Documentation
+-------------
+The robot API is pretty straightforward and discoverable but it's totally
+undocumented. Anyone who feels up to the task of going through and writing
+down what each method and property does would be much appreciated.
+
+
+Robots
+------
+What good's a robot fighting game without any robots to fight? Language
+advocates, now's your chance to prove your language is really the best at
+tackling complex problems. Java people, break out your IKVMs. Functional
+programmers, prove once again that we poor procedurally-thinking mortals
+are lesser beings by having your genius F# creations pummel our robots into
+oblivion. VBers, tired of getting laughed at by the C# set? They won't be
+laughing when your robot kicks their butts. Nemerle, IronPython... all
+languages are welcome to shoot the crap out of each other on an equal
+footing.
+
+(If your favorite CLI language doesn't work for some reason, let me know
+and I'll make whatever changes are necessary so it can)
+
+And when you think your robots are getting pretty good, Dumbledore's Army is
+waiting to make them all look like a bunch of muggles...

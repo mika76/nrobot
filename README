@@ -1,0 +1,71 @@
+NRobot is an autonomous robot fighting game.
+
+What this means is it's a game in which you, the human playing the game, don't
+directly control the robot that's trying to win it for you. Instead, you have
+to write a program which acts as the robot's brain, and then let it play the
+game by itself.
+
+NRobot targets the ECMA CLR which is a multi-language virtual machine. It has
+been tested on two CLR implementations: Mono (http://www.go-mono.com/) and
+Microsoft's .NET Framework. Due to the relative maturity of the available GUI
+toolkits on these implementations, we recommend using the GTK# front end
+(NRobotGTK) on Mono, and the Windows Forms front end (NRobotWin) on .NET.
+
+The choice of the CLR as a platform for NRobot allows you, the robot programmer,
+some freedom in choosing what language to implement your robot in. At the time
+of writing Mono supports at least C#, Java (via IKVM, http://www.ikvm.net/),
+Python (via IronPython), Nemerle, and Visual Basic. Other languages are
+available from third parties. The sample robots provided with NRobot are written
+in C# and Java, but if you are familiar with another CLR language it shouldn't
+be too hard to translate.
+
+WARNING: NRobot comes with a security architecture to prevent robots from doing
+malicious things on your machine. However, Mono's security support is not yet
+complete enough to ensure your safety. If you are running nrobot on Mono and
+have any robots whose authors you do not trust, I suggest running nrobot under
+a user account with no access to anything significant. On .NET on Windows the
+security architecture works, but if you need to turn it off you can pass the
+"-insecure" flag. Unfortunately a limitation of IKVM right now is that it
+cannot produce code that will run in a "partially trusted" environment. This
+means that you *must* use "-insecure" (or Mono) if you have robots written in
+Java.
+
+You can watch a game between the sample robots by running bin/nrobot (on
+unixish platforms using Mono/GTK#) or RuNRobot.bat (on Windows using .NET).
+These scripts load robots from the Bots/Mono or Bots/Win directories,
+respectively. You'll see that the Follower and Latte sample robots are pretty
+good, but the other two (Dizzy and Random) are usually pure cannon fodder,
+except when Follower and Latte take each other out.
+
+The source code of the sample robots is located in the SampleBots directory. If
+you plan to use C# or Java to write your robot, a copy of one of these is
+probably a good place to start. Regardless, the skeleton of a robot looks like
+this:
+
+using NRobot.Robot;
+
+[assembly:RobotClass("NRobot.MyName.MyRobot")]
+namespace NRobot.MyName {
+
+  [OwnerEmail("me@example.com")]
+  [TeamInfo(Name="My Team", BodyColor=0xffff00)]
+  [RobotInfo(Name="My Robot")]
+  public class MyRobot : IRobot {
+    public void Start(StartState state) {
+      // Implementation here
+    }
+    public void Tick(TickState state) {
+      // Implementation here
+    }
+  }
+}
+
+Everything in this skeleton is pretty much required for any robot. In the
+bodies of Start and Tick you are free to do whatever you want, but you need to
+use the state object to find out about your environment and have any control
+over your robot's actions. The TickState and StartState APIs are not documented
+yet (obviously a major failing) but if you are using an IDE with intelligent
+autocompletion you can probably guess what most things do. If not, you can
+examine the code of the TickState, StartState and RobotState classes themselves
+to find the public methods and properties. It shouldn't be too hard to figure
+out, especially with the sample bots as examples.

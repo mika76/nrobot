@@ -1,0 +1,25 @@
+<root>
+	<assembly>
+		<attribute type="NRobot.Robot.RobotClassAttribute, NRobot" sig="(Ljava.lang.String;)V">
+			<parameter>org.gna.nrobot.samplebots.latte.LatteBot</parameter>
+		</attribute>
+		<class name="org.gna.nrobot.samplebots.latte.LatteBot">
+			<attribute type="NRobot.Robot.OwnerEmailAttribute, NRobot" sig="(Ljava.lang.String;)V">
+				<parameter>nrobot-list@gna.org</parameter>
+			</attribute>
+			<attribute type="NRobot.Robot.TeamInfoAttribute, NRobot" sig="()V">
+				<property name="Name" sig="Ljava.lang.String;">LatteTeam</property>
+				<property name="BodyColor" sig="I">10053188</property> <!-- 0x996644 -->
+				<property name="BulletSpeed" sig="Lcli.NRobot.Robot.TradeOff;">Better</property>
+				<property name="ShotDelay" sig="Lcli.NRobot.Robot.TradeOff;">Better</property>
+				<!-- BulletDamage, MaxMoveSpeed, MaxTurnSpeed, Size left as default -->
+				<property name="ShotsPermitted" sig="Lcli.NRobot.Robot.TradeOff;">Worse</property>
+				<property name="MaxTurretTurnSpeed" sig="Lcli.NRobot.Robot.TradeOff;">Worse</property>
+			</attribute>
+			<attribute type="NRobot.Robot.RobotInfoAttribute, NRobot" sig="(I)V">
+				<parameter>1</parameter>
+				<property name="Name" sig="Ljava.lang.String;">LatteBot</property>
+			</attribute>
+		</class>
+	</assembly>
+</root>

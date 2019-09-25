@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -e
+cd NRobot
+echo -n "Compiling NRobot: "
+mcs -debug -t:library -out:../bin/NRobot.dll */*.cs
+cd ../NRobotCLI
+echo -n "Compiling NRobotCLI: "
+mcs -out:../bin/NRobotCLI.exe -r:../bin/NRobot.dll NRobotCLI.cs
+cd ../NRobotGTK
+echo -n "Compiling NRobotGTK: "
+mcs -out:../bin/NRobotGTK.exe -r:../bin/NRobot.dll -pkg:gtk-sharp NRobotGTK.cs
+cd ../SampleBots
+echo "Compiling sample bots..."
+for n in Dizzy Random Follower; do
+  echo -n "$n: "
+  mcs -t:library -out:../Bots/Mono/$n.dll -r:../bin/NRobot.dll $n/$n.cs
+  if [ $n != Follower ]; then
+    echo -n "${n}2: "
+    mcs -t:library -out:../Bots/Mono/${n}2.dll -r:../bin/NRobot.dll $n/$n.cs
+  fi
+done
