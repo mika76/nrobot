@@ -1,3 +1,6 @@
+> **NOTE:**
+> This is the source of the programming game NRobot found at http://freshmeat.sourceforge.net/projects/nrobot and I also found a project page at https://web.archive.org/web/20170225164738/https://gna.org/projects/nrobot. All the sources and information is gone so I thought I would upload to github and see if I can breathe some life back into this little fun project.
+
 NRobot is an autonomous robot fighting game.
 
 What this means is it's a game in which you, the human playing the game, don't
@@ -19,7 +22,7 @@ available from third parties. The sample robots provided with NRobot are written
 in C# and Java, but if you are familiar with another CLR language it shouldn't
 be too hard to translate.
 
-WARNING: NRobot comes with a security architecture to prevent robots from doing
+**WARNING:** NRobot comes with a security architecture to prevent robots from doing
 malicious things on your machine. However, Mono's security support is not yet
 complete enough to ensure your safety. If you are running nrobot on Mono and
 have any robots whose authors you do not trust, I suggest running nrobot under
@@ -42,6 +45,7 @@ you plan to use C# or Java to write your robot, a copy of one of these is
 probably a good place to start. Regardless, the skeleton of a robot looks like
 this:
 
+```C#
 using NRobot.Robot;
 
 [assembly:RobotClass("NRobot.MyName.MyRobot")]
@@ -59,6 +63,7 @@ namespace NRobot.MyName {
     }
   }
 }
+```
 
 Everything in this skeleton is pretty much required for any robot. In the
 bodies of Start and Tick you are free to do whatever you want, but you need to
